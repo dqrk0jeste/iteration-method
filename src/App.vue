@@ -68,15 +68,17 @@ const result = computed(() => {
           </span>
         </h2>
       </div>
-      <template v-if="!(result instanceof Error)">
+      <template v-if="result && !(result instanceof Error)">
         <h3 class="text-3xl flex items-center gap-3">
           <span>
-            Rešenje je <span class="text-blue-500">{{ result.solution.toFixed(6) }}</span> 
+            Rešenje je <span class="text-blue-500">{{ result?.solution?.toFixed(6) }}</span> 
           </span>
           <button
             @click="stepsOpened = true"
             class="px-3 py-2 border-solid border-black border hover:bg-gray-200 rounded-lg"
-          >-></button>
+          >
+            ->
+          </button>
         </h3>
       </template>
       <template v-else>
@@ -90,7 +92,9 @@ const result = computed(() => {
         <button
           class="px-12 py-3 border-2 border-solid border-red-500 text-red-500 text-center"
           @click="stepsOpened = false"
-        >X</button>
+        >
+          X
+        </button>
         <div class="px-12 py-3 border border-solid border-black text-center">x <sub>n-1</sub></div>
         <div class="px-12 py-3 border border-solid border-black text-center">x <sub>n</sub></div>
         <div class="px-12 py-3 border border-solid border-black text-center">g(x <sub>n</sub>)</div>
