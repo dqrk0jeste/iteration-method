@@ -19,7 +19,7 @@ export function solve(
   eq: string,
   left: number,
   right: number,
-) {
+) : solveReturn {
 
   function f(x: number): number {
     return evaluatex(eq)({ x: x })
@@ -31,11 +31,17 @@ export function solve(
   }
 
   if(f(left) === left) {
-    return left
+    return {
+      solution: left,
+      steps: []
+    }
   }
   
   if(f(right) === right) {
-    return right
+    return {
+      solution: right,
+      steps: []
+    }
   }
 
   if((f(left) - left) * (f(right) - right) > 0) {
@@ -67,7 +73,6 @@ export function solve(
 
   while(Math.abs(current - prev) > criteria) {
     const tempCurrent = current
-    const tempPrev = prev
     current = f(current)
     prev = tempCurrent
 

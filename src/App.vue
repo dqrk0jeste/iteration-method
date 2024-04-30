@@ -22,6 +22,9 @@ const parsedInput = computed(() => {
 })
 
 const result = computed(() => {
+  if(input === "" || left.value === undefined || right.value === undefined) {
+    return null
+  }
   try {
     const res = solve(
       parsedInput.value,
@@ -49,8 +52,8 @@ const result = computed(() => {
             class="border-black border focus:border-blue-500 outline-none rounded p-3 text-lg"
             placeholder="g(x)"
           >
-          <span class="text-3xl flex items-center gap-2">na intervalu
-            (
+          <span class="text-3xl flex items-center gap-2">na segmentu
+            [
             <input
               v-model="left"
               type="number"
@@ -64,7 +67,7 @@ const result = computed(() => {
               placeholder="b"
               class="border-black border focus:border-blue-500 outline-none rounded p-3 text-lg w-24"
             >
-            )
+            ]
           </span>
         </h2>
       </div>
@@ -75,7 +78,7 @@ const result = computed(() => {
           </span>
           <button
             @click="stepsOpened = true"
-            class="px-3 py-2 border-solid border-black border hover:bg-gray-200 rounded-lg"
+            class="px-3 py-2 border-solid border-black border hover:border-blue-500 hover:text-blue-500 rounded-lg transition-all"
           >
             ->
           </button>
@@ -87,25 +90,27 @@ const result = computed(() => {
     </div>
   </main>
   <Teleport v-if="stepsOpened" to="body">
-    <div class="fixed left-0 top-0 w-full h-[100dvh] py-5 overflow-auto bg-white flex justify-center">
-      <div class="grid grid-cols-5 gap-3">
+    <div class="fixed left-0 top-0 w-full h-[100dvh] py-5 overflow-auto bg-white">
+      <div class="max-w-[1000px] m-auto">
+        <div class="grid grid-cols-5 gap-3">
         <button
-          class="px-12 py-3 border-2 border-solid border-red-500 text-red-500 text-center"
+          class="py-3 border border-solid border-red-500 rounded-lg text-red-500 text-center hover:bg-red-500 hover:text-white transition-colors"
           @click="stepsOpened = false"
         >
-          X
+          zatvori
         </button>
-        <div class="px-12 py-3 border border-solid border-black text-center">x <sub>n-1</sub></div>
-        <div class="px-12 py-3 border border-solid border-black text-center">x <sub>n</sub></div>
-        <div class="px-12 py-3 border border-solid border-black text-center">g(x <sub>n</sub>)</div>
-        <div class="px-12 py-3 border border-solid border-black text-center">| x <sub>n</sub> - x <sub>n-1</sub> |</div>
+        <div class="py-3 border border-solid border-black rounded-lg text-center font-bold">x <sub>n-1</sub></div>
+        <div class="py-3 border border-solid border-black rounded-lg text-center font-bold">x <sub>n</sub></div>
+        <div class="py-3 border border-solid border-black rounded-lg text-center font-bold">g(x <sub>n</sub>)</div>
+        <div class="py-3 border border-solid border-black rounded-lg text-center font-bold">| x <sub>n</sub> - x <sub>n-1</sub> |</div>
         <template v-for="step, index in result.steps">
-          <div class="px-12 py-3 border border-solid border-black text-center">{{ index }}</div>
-          <div class="px-12 py-3 border border-solid border-black text-center">{{ step.prev.toFixed(6) }}</div>
-          <div class="px-12 py-3 border border-solid border-black text-center">{{ step.current.toFixed(6) }}</div>
-          <div class="px-12 py-3 border border-solid border-black text-center">{{ step.currentF.toFixed(6)}}</div>
-          <div class="px-12 py-3 border border-solid border-black text-center">{{ step.delta.toFixed(6) }}</div>
+          <div class="py-3 border border-solid border-black text-center rounded-lg">n = {{ index + 1 }}</div>
+          <div class="py-3 border border-solid border-black text-center rounded-lg">{{ step.prev.toFixed(6) }}</div>
+          <div class="py-3 border border-solid border-black text-center rounded-lg">{{ step.current.toFixed(6) }}</div>
+          <div class="py-3 border border-solid border-black text-center rounded-lg">{{ step.currentF.toFixed(6)}}</div>
+          <div class="py-3 border border-solid border-black text-center rounded-lg">{{ step.delta.toFixed(6) }}</div>
         </template>
+      </div>
       </div>
     </div>
   </Teleport>
