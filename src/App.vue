@@ -1,32 +1,39 @@
 <script setup>
-import evaluatex from 'evaluatex'
 import { computed, ref } from 'vue'
 
+import { solve } from './eq'
+
 const input = ref("")
-const startValue = ref()
+const left = ref()
+const right = ref()
+
+const stepsOpened = ref(false)
 
 const parsedInput = computed(() => {
   return input.value.
     replaceAll('pi', 'PI').
     replaceAll('e', 'E').
     replaceAll('tg', 'tan').
+    replaceAll('ctg', 'cot').
     replaceAll('arcsin', 'asin').
     replaceAll('arccos', 'acos').
-    replaceAll('arctg', 'atan').
-    replaceAll('ln', 'log').
-    replaceAll('log', 'logn')
+    replaceAll('arctan', 'atan').
+    replaceAll('ln', 'log')
 })
 
 const result = computed(() => {
   try {
-    const res = evaluatex(parsedInput.value)({
-      x: parseFloat(startValue.value),
-    })
-    return res.toFixed(6)
+    const res = solve(
+      parsedInput.value,
+      left.value,
+      right.value,
+    )
+    return res
   } catch(e) {
-    return '...'
+    return e
   }
 })
+
 </script>
 
 <template>
@@ -42,17 +49,62 @@ const result = computed(() => {
             class="border-black border focus:border-blue-500 outline-none rounded p-3 text-lg"
             placeholder="g(x)"
           >
-          <span class="text-3xl">za x<sub>0</sub>=</span>
-          <input
-            v-model="startValue"
-            type="number"
-            class="border-black border focus:border-blue-500 outline-none rounded p-3 text-lg w-24"
-          >
+          <span class="text-3xl flex items-center gap-2">na intervalu
+            (
+            <input
+              v-model="left"
+              type="number"
+              placeholder="a"
+              class="border-black border focus:border-blue-500 outline-none rounded p-3 text-lg w-24"
+            >
+            ,
+            <input
+              v-model="right"
+              type="number"
+              placeholder="b"
+              class="border-black border focus:border-blue-500 outline-none rounded p-3 text-lg w-24"
+            >
+            )
+          </span>
         </h2>
       </div>
-      {{ result }}
+      <template v-if="!(result instanceof Error)">
+        <h3 class="text-3xl flex items-center gap-3">
+          <span>
+            Rešenje je <span class="text-blue-500">{{ result.solution.toFixed(6) }}</span> 
+          </span>
+          <button
+            @click="stepsOpened = true"
+            class="px-3 py-2 border-solid border-black border hover:bg-gray-200 rounded-lg"
+          >-></button>
+        </h3>
+      </template>
+      <template v-else>
+        {{ result }}
+      </template>
     </div>
   </main>
+  <Teleport v-if="stepsOpened" to="body">
+    <div class="fixed left-0 top-0 w-full h-[100dvh] py-5 overflow-auto bg-white flex justify-center">
+      <div class="grid grid-cols-5 gap-3">
+        <button
+          class="px-12 py-3 border-2 border-solid border-red-500 text-red-500 text-center"
+          @click="stepsOpened = false"
+        >X</button>
+        <div class="px-12 py-3 border border-solid border-black text-center">x <sub>n-1</sub></div>
+        <div class="px-12 py-3 border border-solid border-black text-center">x <sub>n</sub></div>
+        <div class="px-12 py-3 border border-solid border-black text-center">g(x <sub>n</sub>)</div>
+        <div class="px-12 py-3 border border-solid border-black text-center">| x <sub>n</sub> - x <sub>n-1</sub> |</div>
+        <template v-for="step, index in result.steps">
+          <div class="px-12 py-3 border border-solid border-black text-center">{{ index }}</div>
+          <div class="px-12 py-3 border border-solid border-black text-center">{{ step.prev.toFixed(6) }}</div>
+          <div class="px-12 py-3 border border-solid border-black text-center">{{ step.current.toFixed(6) }}</div>
+          <div class="px-12 py-3 border border-solid border-black text-center">{{ step.currentF.toFixed(6)}}</div>
+          <div class="px-12 py-3 border border-solid border-black text-center">{{ step.delta.toFixed(6) }}</div>
+        </template>
+      </div>
+    </div>
+  </Teleport>
 </template>
 
 <style scoped>
