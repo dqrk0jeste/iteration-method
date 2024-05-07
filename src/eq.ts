@@ -22,7 +22,7 @@ export function solve(
 ) : solveReturn {
 
   function f(x: number): number {
-    return evaluatex(eq)({ x: x })
+    return evaluatex(eq)({ x })
   }
 
   function derivative(x: number) {
@@ -48,10 +48,15 @@ export function solve(
     throw new Error('Mozda nema rešenja')
   }
 
-  const leftDerivative = derivative(left)
-  const rightDerivative = derivative(right)
-
-  const q = Math.max(leftDerivative, rightDerivative)
+  let i = left
+  let q = Math.abs(derivative(i))
+  while(i <= right) {
+    const d = Math.abs(derivative(i))
+    if(d > q) {
+      q = d
+    }
+    i += 0.1
+  }
 
   if(q > 1) {
     throw new Error('Funkcija nije kontrakcija')
@@ -59,7 +64,6 @@ export function solve(
 
   const criteria = q <= 0.5 ? ERROR : (1 - q) / q * ERROR
 
-  
   let prev = left
   let current = f(left)
 
@@ -68,7 +72,7 @@ export function solve(
     prev,
     current,
     currentF: f(current),
-    delta: current - prev,
+    delta: Math.abs(current - prev),
   })
 
   while(Math.abs(current - prev) > criteria) {

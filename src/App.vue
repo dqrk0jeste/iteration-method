@@ -13,11 +13,12 @@ const parsedInput = computed(() => {
   return input.value.
     replaceAll('pi', 'PI').
     replaceAll('e', 'E').
-    replaceAll('tg', 'tan').
-    replaceAll('ctg', 'cot').
     replaceAll('arcsin', 'asin').
     replaceAll('arccos', 'acos').
-    replaceAll('arctan', 'atan').
+    replaceAll('arctg', 'atan').
+    replaceAll('tg', 'tan').
+    replaceAll('ctg', 'cot').
+    replaceAll('log', 'logn').
     replaceAll('ln', 'log')
 })
 
